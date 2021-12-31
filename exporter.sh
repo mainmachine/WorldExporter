@@ -12,7 +12,7 @@ DIVIDER="=================================="
 
 SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )" # Location of this file
 
-function setup {
+setup() {
     if [ ! -w "files" ]; then #Test if files folder is writeable
         fileError
     fi
@@ -43,7 +43,7 @@ function setup {
     introduction
 }
 
-function fileError {
+fileError() {
     echo "An error was encountered when trying to access necessary files."
     echo "Please make sure that the ZIP file is extracted before using World Exporter."
     echo "If you need help, please contact $EMAIL"
@@ -52,7 +52,7 @@ function fileError {
     exit 1
 }
 
-function javaNotInstalled {
+javaNotInstalled() {
     echo "Java was not detected on your system."
     echo "Please make sure Java is installed."
     echo "If you need help, please contact $EMAIL"
@@ -61,7 +61,7 @@ function javaNotInstalled {
     exit 1
 }
 
-function worldFolderExists {
+worldFolderExists() {
     echo "The 'minecraftWorlds' folder inside WorldExporter's directory must be deleted (or renamed) before exporting new worlds."
     echo 
     read -p "Press enter to delete the folder and continue, or Ctrl+C to abort."
@@ -69,14 +69,14 @@ function worldFolderExists {
     setup
 }
 
-function adbNotInstalled {
+adbNotInstalled() {
     echo "This script requires adb. Please install it then run the script again."
     echo
     read -p "Press enter to continue"
     exit 1
 }
 
-function minecraftNotInstalled {
+minecraftNotInstalled() {
     echo "Minecraft was not detected on your device."
     echo "If Minecraft is installed, this means that there is an error communicating with your device. Please contact my email, $EMAIL"
     echo
@@ -84,7 +84,7 @@ function minecraftNotInstalled {
     exit 1
 }
 
-function backupError {
+backupError() {
     echo "Something went wrong during the extraction process."
     echo
     echo "But don't give up yet!"
@@ -94,7 +94,7 @@ function backupError {
     exit 1
 }
 
-function emptyBackup {
+emptyBackup() {
     echo "The backup has been exported succesfully but the minecraftWorlds folder could not be found."
     echo "Are you sure that you have set your storage type to 'Application' in Minecraft settings?"
     echo "If you need help, please contact $EMAIL"
@@ -103,7 +103,7 @@ function emptyBackup {
     exit 1
 }
 
-function introduction {
+introduction() {
     echo "Welcome to Minecraft World Exporter"
     echo "==================================="
     echo
@@ -116,7 +116,24 @@ function introduction {
     driver
 }
 
-function debugging {
+driver() {
+    echo "$HEADING"
+    echo "$DIVIDER"
+    echo
+    echo  "An ADB driver is required to connect to the device. Checking for ADB..."
+    echo
+    ADBCHECK="$(command -v adb)"
+    if [ -n "$ADBCHECK" ]; then
+        echo "ADB installed at ${ADBCHECK} - Proceeding..."
+        echo 
+    else
+        echo "ADB not installed! You've got to install ADB before proceeding..."
+        exit 10
+    fi
+    debugging
+}
+
+debugging() {
     echo "$HEADING"
     echo "$DIVIDER"
     echo 
@@ -135,7 +152,7 @@ function debugging {
     backup
 }
 
-function backup {
+backup() {
     MINECRAFTPATH=$(adb shell pm path com.mojang.minecraftpe)
     if [ "$MINECRAFTPATH" = "" ]; then
         minecraftNotInstalled
@@ -152,7 +169,7 @@ function backup {
     extraction
 }
 
-function extraction {
+extraction() {
     echo
     echo "Backup copied from device. You may unplug your device now."
     if [ ! -f "backup.ab" ]; then
@@ -204,7 +221,7 @@ function extraction {
     end
 }
 
-function end {
+end() {
     echo "$HEADING"
     echo "$DIVIDER"
     echo
