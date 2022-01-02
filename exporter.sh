@@ -217,7 +217,7 @@ extraction() {
     adb kill-server
     echo World Export Complete!
     
-    open "$SCRIPTPATH/minecraftWorlds"
+    xdg-open "$SCRIPTPATH/minecraftWorlds"
     end
 }
 
